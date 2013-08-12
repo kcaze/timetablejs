@@ -1,0 +1,83 @@
+<!DOCTYPE>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>timetableJS</title>
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="screen">
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>timetableJS</h1>
+
+      <form>
+        <fieldset>
+          <div class="form-group">
+            <label for="dataInput">Data file (.csv)</label>
+            <input type="file" id="dataInput">
+          </div>
+          <div class="form-group">
+            <label for="dataInput">Settings file (.json)</label>
+            <input type="file" id="dataInput">
+          </div>
+          <button type="button" class="btn btn-default" onclick="process()">Submit</button>
+        </fieldset>
+      </form>
+
+      <div class="panel"> 
+        <div class="panel-heading">
+          <h2 class="panel-title">Schedule</h2>
+        </div>
+        <div id="schedule">
+        </div>
+      </div>
+    </div>
+
+    <!-- Dependencies -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/parallel.js"></script>
+
+    <!-- Timetabling code -->
+    <script src="js/timetable.js"></script>
+    <script type="text/javascript">
+      function process() {
+        var jsonFile = $("#jsonInput").get(0).files[0];
+        var dataFile = $("#dataInput").get(0).files[0];
+        var jsonReader = new FileReader();
+        var dataReader = new FileReader();
+        var settings = {};
+
+        timetable.onload = function (e) {
+          switch (e.type) {
+            case "parseData":
+              console.log(e.data);
+              timetable.schedule(e.data);
+              break;
+            case "schedule":
+              console.log(e.data);
+              var output = "<ul>";
+              for (n in e.data) {
+                if (n != "score")
+                  output += "<li>"+n + ": " + e.data[n] + "</li>";
+              }
+              $("#schedule").html(output);
+              break;
+            default:
+              console.log(e.type, e.data);
+              break;
+          }
+        };
+
+        dataReader.onload = function (e) {
+          graph = timetable.parseData(e.target.result);
+        };
+        jsonReader.onload = function (e) {
+          settings = JSON.parse(e.target.result);
+          dataReader.readAsText(dataFile);
+        };
+        jsonReader.readAsText(jsonFile);
+      }
+    </script>
+  </body>
+</html>

@@ -17,10 +17,10 @@
             <input type="file" id="dataInput">
           </div>
           <div class="form-group">
-            <label for="dataInput">Settings file (.json)</label>
-            <input type="file" id="dataInput">
+            <label for="jsonInput">Settings file (.json)</label>
+            <input type="file" id="jsonInput">
           </div>
-          <button type="button" class="btn btn-default" onclick="process()">Submit</button>
+          <button type="button" class="btn btn-default" onclick="process()">Schedule!</button>
         </fieldset>
       </form>
 
@@ -42,41 +42,45 @@
     <script src="js/timetable.js"></script>
     <script type="text/javascript">
       function process() {
-        var jsonFile = $("#jsonInput").get(0).files[0];
         var dataFile = $("#dataInput").get(0).files[0];
-        var jsonReader = new FileReader();
+        var settingsFile = $("#jsonInput").get(0).files[0];
         var dataReader = new FileReader();
-        var settings = {};
+        var settingsReader = new FileReader();
+        var data, settings;
 
-        timetable.onload = function (e) {
+        timetable.onComplete = function (e) {
           switch (e.type) {
-            case "parseData":
-              console.log(e.data);
-              timetable.schedule(e.data);
+            case "progress":
+              $("#schedule").html("Crunching schedule "+(100*e.progress/e.max).toFixed(2)+"%");
+              document.title = (100*e.progress/e.max).toFixed(2)+"% - timetableJS";
               break;
-            case "schedule":
-              console.log(e.data);
-              var output = "<ul>";
-              for (n in e.data) {
-                if (n != "score")
-                  output += "<li>"+n + ": " + e.data[n] + "</li>";
+            case "complete":
+              var best = e.schedule;
+              console.log(best);
+              var schedule = "Score: "+best.score+"<br><ul>";
+              for (n in best) {
+                if (best.hasOwnProperty(n) && n != "score") {
+                  schedule += "<li>"+n+": "+best[n]+"</li>";
+                }
               }
-              $("#schedule").html(output);
-              break;
-            default:
-              console.log(e.type, e.data);
+              schedule += "</ul>";
+              $("#schedule").html(schedule);
+              document.title = "completed! - timetableJS";
               break;
           }
         };
 
         dataReader.onload = function (e) {
-          graph = timetable.parseData(e.target.result);
+          console.log("Data (CSV) loaded.");
+          data = e.target.result;
+          settingsReader.readAsText(settingsFile);
         };
-        jsonReader.onload = function (e) {
-          settings = JSON.parse(e.target.result);
-          dataReader.readAsText(dataFile);
+        settingsReader.onload = function (e) {
+          console.log("Settings (JSON) loaded.");
+          settings = e.target.result;
+          timetable(data, settings);
         };
-        jsonReader.readAsText(jsonFile);
+        dataReader.readAsText(dataFile);
       }
     </script>
   </body>

@@ -1,0 +1,9 @@
+{
+  "blocks" : ["A", "B", "C", "D", "E", "F"],
+  "classes" : {
+    "11ART00HL1" : ["A", "C", "D"]
+    },
+  "algorithm" : "GA",
+  "iterations" : "300",
+  "populationSize" : "1000"
+}

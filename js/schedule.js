@@ -79,7 +79,12 @@ function GA(graph, settings) {
     postMessage(JSON.stringify({ type : "progress", progress : ii, max : iterations }));
     population = selection(population);
   
-    if (population[0].score < best.score) best = population[0];
+    if (population[0].score < best.score) {
+      best = {};
+      for (var jj = 0; jj < nodeIndex.length; jj++)
+        best[nodeIndex[jj]] = population[0][nodeIndex[jj]];
+      best.score = population[0].score;
+    }
   
     var children = [];
     while (population.length + children.length < populationSize) {

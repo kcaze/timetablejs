@@ -47,6 +47,7 @@ timetable = (function () {
 
       return graph;
     }
+    
     function jsonToSettings(json) {
       settings = JSON.parse(json);
       for (n in graph.nodes)

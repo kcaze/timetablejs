@@ -28,7 +28,7 @@ function GA(graph, settings) {
     for (var ii = 0; ii < nodeIndex.length; ii++) {
       for (var jj = ii+1; jj < nodeIndex.length; jj++) {
         var e = nodeIndex[ii], f = nodeIndex[jj];
-        if (coloring[e] === coloring[f] && graph.edges[e][f])
+        if (coloring[e] == coloring[f] && graph.edges[e][f])
           score += graph.edges[e][f].weight;
       }
     }
@@ -93,5 +93,32 @@ function GA(graph, settings) {
     mutate(population);
   }
 
-  postMessage(JSON.stringify({ type : "complete", schedule : best }));
+  //generate the schedule object to return
+  var schedule = {clashes : best.score};
+  schedule.blocks = {};
+  for (var ii = 0; ii < nodeIndex.length; ii++) {
+    schedule.blocks[nodeIndex[ii]] = best[nodeIndex[ii]];
+  }
+  schedule.clashStudents = [];
+  //so ugly...
+  for (var ii = 0; ii < nodeIndex.length; ii++) {
+    for (var jj = ii+1; jj < nodeIndex.length; jj++) {
+      if (best[nodeIndex[ii]] == best[nodeIndex[jj]]) {
+        var students1 = graph.nodes[nodeIndex[ii]].students;
+        var students2 = graph.nodes[nodeIndex[jj]].students;
+        for (var kk = 0; kk < students1.length; kk++) {
+          if (students2.indexOf(students1[kk]) != -1) {
+            schedule.clashStudents.push({
+              student : students1[kk], 
+              class1 : nodeIndex[ii],
+              class2 : nodeIndex[jj],
+              block : best[nodeIndex[ii]]
+            });
+          }
+        }
+      }
+    }
+  }
+
+  postMessage(JSON.stringify({ type : "complete", schedule : schedule }));
 }

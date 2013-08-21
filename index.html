@@ -4,38 +4,50 @@
     <meta charset="UTF-8">
     <title>timetableJS</title>
     <link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/all.css" type="text/css" media="screen">
   </head>
 
   <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-time"></span> timetableJS</a>
+      </div>
+        <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Schedule</a></li>
+        <li><a href="#">Help</a></li>
+        </ul>
+        <p class="navbar-text navbar-right">Icons are from <a href="http://glyphicons.com">Glyphicons</a>.</p>
+    </nav>
     <div class="container">
-      <h1>timetableJS</h1>
+      <h1>Schedule</h1>
 
-      <form>
-        <fieldset>
-          <div class="form-group">
-            <label for="dataInput">Data file (.csv)</label>
-            <input type="file" id="dataInput">
-          </div>
-          <div class="form-group">
-            <label for="jsonInput">Settings file (.json)</label>
-            <input type="file" id="jsonInput">
-          </div>
-          <button type="button" class="btn btn-default" onclick="process()">Schedule!</button>
-        </fieldset>
-      </form>
-
-      <div class="panel"> 
-        <div class="panel-heading">
-          <h2 class="panel-title">Schedule</h2>
+      <form class="form-inline">
+        <div class="form-group">
+          <label for="dataInput">Select data file</label>
+          <input class="form-control" type="file" id="dataInput">
         </div>
-        <div id="schedule">
+        <div class="form-group">
+          <label for="jsonInput">Select settings file</label>
+          <input class="form-control" type="file" id="jsonInput">
+        </div>
+      </form>
+      <button class="btn btn-success" onclick="process()">Schedule!</button>
+
+      <hr>
+
+      <div class="panel panel-success"> 
+        <div class="panel-heading">
+          <h1 class="panel-title">Output</h1>
+        </div>
+        <div class="panel-body" id="schedule">
         </div>
       </div>
+
     </div>
 
     <!-- Dependencies -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.js"></script>
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/parallel.js"></script>
 
     <!-- Timetabling code -->
@@ -55,16 +67,23 @@
               document.title = (100*e.progress/e.max).toFixed(2)+"% - timetableJS";
               break;
             case "complete":
-              var best = e.schedule;
-              console.log(best);
-              var schedule = "Score: "+best.score+"<br><ul>";
-              for (n in best) {
-                if (best.hasOwnProperty(n) && n != "score") {
-                  schedule += "<li>"+n+": "+best[n]+"</li>";
+              var schedule = e.schedule;
+              console.log(schedule);
+              var output = "<h3>Clashes</h3><p>"+schedule.clashes+"</p><hr><h3>Schedule</h3><ul class=list-unstyled>";
+              for (n in schedule.blocks) {
+                if (schedule.blocks.hasOwnProperty(n)) {
+                  output += "<li>"+n+": "+schedule.blocks[n]+"</li>";
                 }
               }
-              schedule += "</ul>";
-              $("#schedule").html(schedule);
+              output += "</ul><hr><h3>Students with clashes</h3><ul class=list-unstyled>";
+              for (n in schedule.clashStudents) {
+                if (schedule.clashStudents.hasOwnProperty(n)) {
+                  var s = schedule.clashStudents[n];
+                  output += "<li>"+s.student+", "+s.class1+" &mdash; "+s.class2+", "+s.block+"</li>";
+                }
+              }
+              output += "</ul>";
+              $("#schedule").html(output);
               document.title = "completed! - timetableJS";
               break;
           }

@@ -1,0 +1,23 @@
+<h1>Schedule</h1>
+
+<form class="form-inline">
+  <div class="form-group">
+    <label for="dataInput">Select data file</label>
+    <input class="form-control" type="file" id="dataInput">
+  </div>
+  <div class="form-group">
+    <label for="jsonInput">Select restrictions file</label>
+    <input class="form-control" type="file" id="jsonInput">
+  </div>
+</form>
+<button class="btn btn-primary" onclick="process()">Schedule!</button>
+
+<hr>
+
+<div class="panel panel-primary"> 
+  <div class="panel-heading">
+    <h1 class="panel-title">Output</h1>
+  </div>
+  <div class="panel-body" id="schedule">
+  </div>
+</div>

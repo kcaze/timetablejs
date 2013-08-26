@@ -12,6 +12,7 @@ onmessage = function (e) {
 
 //genetic algorithm
 function GA(graph, settings) {
+  var infinity = Math.pow(10, 100);
   var populationSize = settings.populationSize || 200;
   var iterations = settings.iterations || 300;
   //returns random integer in [min, max]
@@ -30,6 +31,12 @@ function GA(graph, settings) {
         var e = nodeIndex[ii], f = nodeIndex[jj];
         if (coloring[e] == coloring[f] && graph.edges[e][f])
           score += graph.edges[e][f].weight;
+        if (settings.classConflicts[e]) {
+          for (var kk = 0; kk < settings.classConflicts[e].length; kk++) {
+            if (coloring[e] == coloring[settings.classConflicts[e][kk]])
+              return infinity;
+          }
+        }
       }
     }
     return score;

@@ -10,39 +10,25 @@
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-time"></span> timetableJS</a>
+        <div class="navbar-brand" href="#"><span class="glyphicon glyphicon-time"></span> timetableJS</div>
       </div>
         <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Schedule</a></li>
-        <li><a href="#">Help</a></li>
+        <li class="active">
+          <a href="#tabschedule" id="tablinkschedule" data-toggle="tab">Schedule</a>
+        </li><li>
+          <a href="#tabdocs" id="tablinkdocs" data-toggle="tab">Documentation</a>
+        </li><li>
+          <a href="#tababout" id="tablinkabout" data-toggle="tab">About</a>
+        </li>
         </ul>
-        <p class="navbar-text navbar-right">Icons are from <a href="http://glyphicons.com">Glyphicons</a>.</p>
+        <p class="navbar-text navbar-right">Icons from <a href="http://glyphicons.com">Glyphicons</a></p>
     </nav>
     <div class="container">
-      <h1>Schedule</h1>
-
-      <form class="form-inline">
-        <div class="form-group">
-          <label for="dataInput">Select data file</label>
-          <input class="form-control" type="file" id="dataInput">
-        </div>
-        <div class="form-group">
-          <label for="jsonInput">Select settings file</label>
-          <input class="form-control" type="file" id="jsonInput">
-        </div>
-      </form>
-      <button class="btn btn-success" onclick="process()">Schedule!</button>
-
-      <hr>
-
-      <div class="panel panel-success"> 
-        <div class="panel-heading">
-          <h1 class="panel-title">Output</h1>
-        </div>
-        <div class="panel-body" id="schedule">
-        </div>
+      <div class="tab-content">
+        <div class="tab-pane active" id="tabschedule"></div>
+        <div class="tab-pane" id="tabdocs"></div>
+        <div class="tab-pane" id="tababout"></div>
       </div>
-
     </div>
 
     <!-- Dependencies -->
@@ -53,6 +39,11 @@
     <!-- Timetabling code -->
     <script src="js/timetable.js"></script>
     <script type="text/javascript">
+      //load tab contents
+      $('#tabschedule').load('schedule.html');
+      $('#tabdocs').load('docs.html');
+      $('#tababout').load('about.html');
+
       function process() {
         var dataFile = $("#dataInput").get(0).files[0];
         var settingsFile = $("#jsonInput").get(0).files[0];
@@ -69,7 +60,7 @@
             case "complete":
               var schedule = e.schedule;
               console.log(schedule);
-              var output = "<h3>Clashes</h3><p>"+schedule.clashes+"</p><hr><h3>Schedule</h3><ul class=list-unstyled>";
+              var output = "<h3>Conflicts</h3><p>"+schedule.clashes+"</p><hr><h3>Schedule</h3><ul class=list-unstyled>";
               for (n in schedule.blocks) {
                 if (schedule.blocks.hasOwnProperty(n)) {
                   output += "<li>"+n+": "+schedule.blocks[n]+"</li>";

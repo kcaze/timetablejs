@@ -15,7 +15,7 @@ in the schedule.
 
 The data file is used to specify the list of students that take each class. It should be a [CSV file](http://en.wikipedia.org/wiki/Comma-separated_values) where
 each line is formatted as `<CLASS_ID>, <STUDENT_ID>`. The example data file used for
-scheduling WAB's 2013-2014 HL classes can be found [here](examples/data.csv).
+scheduling WAB's 2013-2014 HL classes can be found [here](app/files/data.csv).
 
 ## Restrictions file
 
@@ -49,4 +49,4 @@ algorithm (GA) is implemented. The restrictions file should be a [JSON file](htt
 A higher population size and number of iterations increases the likelihood of a low conflict schedule but also drastically increases
 the amount of time required to obtain a schedule. The population size is recommended to be in the range 100 to 1000, and the recommended 
 number of iterations likewise.
-The example restrictions file used for scheduling WAB's 2013-2014 HL classes can be found [here](examples/data.csv).
+The example restrictions file used for scheduling WAB's 2013-2014 HL classes can be found [here](app/files/restrictions.json).

@@ -9,19 +9,17 @@
 
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="navbar-header">
-        <div class="navbar-brand" href="#"><span class="glyphicon glyphicon-time"></span> timetableJS</div>
-      </div>
-        <ul class="nav navbar-nav">
-        <li class="active">
-          <a href="#tabschedule" id="tablinkschedule" data-toggle="tab">Schedule</a>
-        </li><li>
-          <a href="#tabdocs" id="tablinkdocs" data-toggle="tab">Documentation</a>
-        </li><li>
-          <a href="#tababout" id="tablinkabout" data-toggle="tab">About</a>
-        </li>
-        </ul>
-        <p class="navbar-text navbar-right">Icons from <a href="http://glyphicons.com">Glyphicons</a></p>
+      <p class="navbar-brand"><span class="glyphicon glyphicon-time"></span> timetableJS</p>
+      <ul class="nav navbar-nav">
+      <li class="active">
+        <a href="#tabschedule" id="tablinkschedule" data-toggle="tab">Schedule</a>
+      </li><li>
+        <a href="#tabdocs" id="tablinkdocs" data-toggle="tab">Documentation</a>
+      </li><li>
+        <a href="#tababout" id="tablinkabout" data-toggle="tab">About</a>
+      </li>
+      </ul>
+      <p class="navbar-text navbar-right">Icons from <a href="http://glyphicons.com">Glyphicons</a></p>
     </nav>
     <div class="container">
       <div class="tab-content">
@@ -66,7 +64,7 @@
                   output += "<li>"+n+": "+schedule.blocks[n]+"</li>";
                 }
               }
-              output += "</ul><hr><h3>Students with clashes</h3><ul class=list-unstyled>";
+              output += "</ul><hr><h3>Students with conflicts</h3><ul class=list-unstyled>";
               for (n in schedule.clashStudents) {
                 if (schedule.clashStudents.hasOwnProperty(n)) {
                   var s = schedule.clashStudents[n];

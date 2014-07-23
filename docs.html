@@ -6,18 +6,18 @@ minimizing the number of conflicts for the students taking classes. To use timet
 JSON restrictions file are required.</p>
 <p>Because timetableJS employs stochastic algorithms to minimize the number of conflicts present,
 the schedule is randomly generated each time. Therefore, the optimal schedule may not be outputted the first time
-timetableJS is run. It is recommended to run timetableJS until you are satisfied with the number of conflicts present
+timetableJS is run. It is recommended to run timetableJS multiple times until you are satisfied with the number of conflicts present
 in the schedule.</p>
 
 <h2>Data file</h2>
-<p>The data file is used to specify the list of students that take each class. It should be a CSV file where
-each lines is formatted as <code>&lt;CLASS_ID&gt;, &lt;STUDENT_ID&gt;</code>. The example data file used for
+<p>The data file is used to specify the list of students that take each class. It should be a <a href="http://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a> where
+each line is formatted as <code>&lt;CLASS_ID&gt;, &lt;STUDENT_ID&gt;</code>. The example data file used for
 scheduling WAB's 2013-2014 HL classes can be found <a href="examples/data.csv">here</a>.</p>
 
 <h2>Restrictions file</h2>
 <p>The restrictions file is used to specify any restrictions that timetableJS must schedule around. In addition,
 the restrictions file is also used to specify which scheduling algorithm to use. Currently, only a genetic
-algorithm (GA) is implemented. The restrictions file should be a JSON file in the following format:
+algorithm (GA) is implemented. The restrictions file should be a <a href="http://en.wikipedia.org/wiki/JSON">JSON file</a> in the following format:
 <pre>
 {
   // The list of all possible time blocks. If a class is omitted 

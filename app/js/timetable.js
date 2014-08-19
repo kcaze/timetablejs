@@ -1,18 +1,24 @@
 timetable = (function () {
   function timetable(data_csv, settings_json) {
     var graph, settings, options;
+
     function csvToGraph(csv) {
-      graph = {nodes: {}, edges: {}};
       var students = {};
-      lines = csv.split("\n");
+      var lines = csv.split("\n");
+      graph = {nodes: {}, edges: {}};
   
       //create nodes
       for (var ii = 0; ii < lines.length; ii++) {
         //skip over blank lines
         if (!lines[ii]) continue;
 
-        var c = lines[ii].split(",")[0];
-        var s = lines[ii].split(",")[1];
+        var cols = lines[ii].split(",");
+        if (cols.length < 2) {
+          throw "Missing columns in line "+(ii+1)+".";
+        }
+
+        var c = cols[0]; // class_id
+        var s = cols[1]; // student_id
 
         graph.nodes[c] = graph.nodes[c] || {};
         graph.nodes[c].students = graph.nodes[c].students || [];
@@ -24,10 +30,12 @@ timetable = (function () {
       }
 
       //create edges
-      for (node in graph.nodes)
+      for (node in graph.nodes) {
         graph.edges[node] = {};
+      }
+
       for (student in students) {
-        var s = students[student]
+        var s = students[student];
         for (var ii = 0; ii < s.classes.length; ii++) {
           for (var jj = ii+1; jj < s.classes.length; jj++) {
             var edge1 = graph.edges[s.classes[ii]];
@@ -50,14 +58,29 @@ timetable = (function () {
     
     function jsonToSettings(json) {
       settings = JSON.parse(json);
-      for (n in graph.nodes)
+      // classes not listed in the settings defaults to placeable in all blocks
+      for (n in graph.nodes) {
         settings.classes[n] = settings.classes[n] || settings.blocks;
+      }
     }
 
-    csvToGraph(data_csv);
+    try {
+      csvToGraph(data_csv);
+    } catch(e) {
+      timetable.onComplete({ type: "error", message: e });
+      return; // abort
+    }
     console.log("CSV parsed and produced graph.")
     console.log(graph);
-    jsonToSettings(settings_json);
+    try {
+      jsonToSettings(settings_json);
+    } catch(e) {
+      timetable.onComplete({ 
+        type: "error", 
+        message: "Error while parsing restrictions file: '"+e.message+"'"
+      });
+      return; // abort
+    }
     console.log("JSON parsed and produced settings.");
     console.log(settings);
 

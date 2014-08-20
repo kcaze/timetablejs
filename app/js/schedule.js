@@ -12,7 +12,6 @@ onmessage = function (e) {
 
 //genetic algorithm
 function GA(graph, settings) {
-  var infinity = Math.pow(10, 100);
   var populationSize = settings.populationSize || 200;
   var iterations = settings.iterations || 300;
   //returns random integer in [min, max]
@@ -20,9 +19,8 @@ function GA(graph, settings) {
     return min+Math.round((max-min)*Math.random());
   }
 
-  var infinity = Math.pow(10, 32);
   var nodeIndex = Object.keys(graph.nodes);
-  var best = {score: infinity};
+  var best = {score: Infinity};
 
   function fitness(coloring) {
     var score = 0;
@@ -33,8 +31,9 @@ function GA(graph, settings) {
           score += graph.edges[e][f].weight;
         if (settings.classConflicts[e]) {
           for (var kk = 0; kk < settings.classConflicts[e].length; kk++) {
-            if (coloring[e] == coloring[settings.classConflicts[e][kk]])
-              return infinity;
+            if (coloring[e] == coloring[settings.classConflicts[e][kk]]) {
+              return Infinity;
+            }
           }
         }
       }

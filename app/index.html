@@ -50,23 +50,32 @@
 
       function displayComplete(schedule) {
         console.log(schedule);
-        var output = "<h3>Conflicts</h3><p>"+schedule.clashes+"</p><hr><h3>Schedule</h3><ul class=list-unstyled>";
-        for (n in schedule.blocks) {
-          if (schedule.blocks.hasOwnProperty(n)) {
-            output += "<li>"+n+": "+schedule.blocks[n]+"</li>";
-          }
+        var output;
+
+        // infinity gets converted to null in JSON
+        if (schedule.clashes === null) {
+          output = "<p>No possible schedule that satifies restrictions found.</p>";
+          $("#panel").removeClass().addClass("panel panel-danger");
         }
-        output += "</ul><hr><h3>Students with conflicts</h3><ul class=list-unstyled>";
-        for (n in schedule.clashStudents) {
-          if (schedule.clashStudents.hasOwnProperty(n)) {
-            var s = schedule.clashStudents[n];
-            output += "<li>"+s.student+", "+s.class1+" &mdash; "+s.class2+", "+s.block+"</li>";
+        else {
+          output = "<h3>Conflicts</h3><p>"+schedule.clashes+"</p><hr><h3>Schedule</h3><ul class=list-unstyled>";
+          for (n in schedule.blocks) {
+            if (schedule.blocks.hasOwnProperty(n)) {
+              output += "<li>"+n+": "+schedule.blocks[n]+"</li>";
+            }
           }
+          output += "</ul><hr><h3>Students with conflicts</h3><ul class=list-unstyled>";
+          for (n in schedule.clashStudents) {
+            if (schedule.clashStudents.hasOwnProperty(n)) {
+              var s = schedule.clashStudents[n];
+              output += "<li>"+s.student+", "+s.class1+" &mdash; "+s.class2+", "+s.block+"</li>";
+            }
+          }
+          output += "</ul>";
+          $("#panel").removeClass().addClass("panel panel-success");
         }
-        output += "</ul>";
 
         $("#schedule").html(output);
-        $("#panel").removeClass().addClass("panel panel-success");
         document.title = "completed! - timetableJS";
       }
 

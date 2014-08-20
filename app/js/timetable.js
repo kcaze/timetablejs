@@ -9,16 +9,16 @@ timetable = (function () {
   
       //create nodes
       for (var ii = 0; ii < lines.length; ii++) {
-        //skip over blank lines
+        // skip over blank lines
         if (!lines[ii]) continue;
-
+        
         var cols = lines[ii].split(",");
         if (cols.length < 2) {
           throw "Missing columns in line "+(ii+1)+".";
         }
 
-        var c = cols[0]; // class_id
-        var s = cols[1]; // student_id
+        var c = cols[0].trim(); // class_id
+        var s = cols[1].trim(); // student_id
 
         graph.nodes[c] = graph.nodes[c] || {};
         graph.nodes[c].students = graph.nodes[c].students || [];
@@ -61,6 +61,44 @@ timetable = (function () {
       // classes not listed in the settings defaults to placeable in all blocks
       for (n in graph.nodes) {
         settings.classes[n] = settings.classes[n] || settings.blocks;
+      }
+
+      // verify settings file
+      for (c in settings.classes) {
+        if (!graph.nodes[c]) { 
+          throw {
+            message: "Class '"+c+"' referenced but does not exist in data."
+          };
+        }
+
+        settings.classes[c].forEach(function (b) {
+          var valid = false;
+          for (var ii = 0; ii < settings.blocks.length; ii++) {
+            if (b == settings.blocks[ii]) {
+              valid = true;
+              break;
+            }
+          }
+          if (!valid) {
+            throw {
+              message: "Class '"+c+"' refers to block '"+b+"' that is not declared in blocks."
+            };
+          }
+        });
+      }
+      for (c in settings.classConflicts) {
+        if (!graph.nodes[c]) {
+          throw {
+            message: "Class '"+c+"' referenced in class conflicts but does not exist in data."
+          };
+        }
+        for (var ii = 0; ii < settings.classConflicts[c].length; ii++) {
+          if (!graph.nodes[settings.classConflicts[c][ii]]) {
+            throw {
+              message: "Class '"+settings.classConflicts[c][ii]+"' referenced in class conflicts but does not exist in data."
+            };
+          }
+        }
       }
     }
 

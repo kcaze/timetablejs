@@ -4,7 +4,7 @@ timetable = (function () {
 
     function csvToGraph(csv) {
       var students = {};
-      var lines = csv.split("\n");
+      var lines = csv.split(/[\r\n]+/);
       graph = {nodes: {}, edges: {}};
   
       //create nodes
@@ -96,6 +96,11 @@ timetable = (function () {
           if (!graph.nodes[settings.classConflicts[c][ii]]) {
             throw {
               message: "Class '"+settings.classConflicts[c][ii]+"' referenced in class conflicts but does not exist in data."
+            };
+          }
+          if (c == settings.classConflicts[c][ii]) {
+            throw {
+              message: "Class '"+c+"' declared to conflict with itself."
             };
           }
         }

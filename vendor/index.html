@@ -1,0 +1,131 @@
+<!DOCTYPE>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>timetableJS</title>
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/all.css" type="text/css" media="screen">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <p class="navbar-brand"><span class="glyphicon glyphicon-time"></span> timetableJS</p>
+      <ul class="nav navbar-nav">
+      <li class="active">
+        <a href="#tabschedule" id="tablinkschedule" data-toggle="tab">Schedule</a>
+      </li><li>
+        <a href="#tabdocs" id="tablinkdocs" data-toggle="tab">Documentation</a>
+      </li><li>
+        <a href="#tababout" id="tablinkabout" data-toggle="tab">About</a>
+      </li>
+      </ul>
+      <p class="navbar-text navbar-right">Icons from <a href="http://glyphicons.com">Glyphicons</a></p>
+    </nav>
+    <div class="container">
+      <div class="tab-content">
+        <div class="tab-pane active" id="tabschedule"></div>
+        <div class="tab-pane" id="tabdocs"></div>
+        <div class="tab-pane" id="tababout"></div>
+      </div>
+    </div>
+
+    <!-- Dependencies -->
+    <script src="vendor/jquery/jquery-2.0.3.min.js"></script>
+    <script src="vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="vendor/parallel/parallel.js"></script>
+
+    <!-- Timetabling code -->
+    <script src="js/timetable.js"></script>
+    <script type="text/javascript">
+      //load tab contents
+      $('#tabschedule').load('schedule.html');
+      $('#tabdocs').load('docs.html');
+      $('#tababout').load('about.html');
+
+      function displayProgress(progress, max) {
+        $("#schedule").html("Crunching schedule "+(100*progress/max).toFixed(2)+"%");
+        $("#panel").removeClass().addClass("panel panel-primary");
+        document.title = (100*progress/max).toFixed(2)+"% - timetableJS";
+      }
+
+      function displayComplete(schedule) {
+        console.log(schedule);
+        var output;
+
+        // infinity gets converted to null in JSON
+        if (schedule.clashes === null) {
+          output = "<p>No possible schedule that satifies restrictions found.</p>";
+          $("#panel").removeClass().addClass("panel panel-danger");
+        }
+        else {
+          output = "<h3>Conflicts</h3><p>"+schedule.clashes+"</p><hr><h3>Schedule</h3><ul class=list-unstyled>";
+          for (n in schedule.blocks) {
+            if (schedule.blocks.hasOwnProperty(n)) {
+              output += "<li>"+n+": "+schedule.blocks[n]+"</li>";
+            }
+          }
+          output += "</ul><hr><h3>Students with conflicts</h3><ul class=list-unstyled>";
+          for (n in schedule.clashStudents) {
+            if (schedule.clashStudents.hasOwnProperty(n)) {
+              var s = schedule.clashStudents[n];
+              output += "<li>"+s.student+", "+s.class1+" &mdash; "+s.class2+", "+s.block+"</li>";
+            }
+          }
+          output += "</ul>";
+          $("#panel").removeClass().addClass("panel panel-success");
+        }
+
+        $("#schedule").html(output);
+        document.title = "completed! - timetableJS";
+      }
+
+      function displayError(message) {
+        $("#schedule").html("<h3>Error</h3><p class='bg-danger'>"+message+"</p>");
+        $("#panel").removeClass().addClass("panel panel-danger");
+        document.title = "error! - timetableJS";
+      }
+
+      function process() {
+        var dataFile = $("#dataInput").get(0).files[0];
+        var settingsFile = $("#jsonInput").get(0).files[0];
+        var dataReader = new FileReader();
+        var settingsReader = new FileReader();
+        var data, settings;
+
+        timetable.onComplete = function (e) {
+          switch (e.type) {
+            case "progress":
+              displayProgress(e.progress, e.max);
+              break;
+            case "complete":
+              displayComplete(e.schedule);
+              break;
+            case "error":
+              displayError(e.message);
+              break;
+          }
+        };
+
+        if (!dataFile || !settingsFile) {
+          timetable.onComplete({
+            type: "error",
+            message: "Please select a data file and restrictions file."
+          });
+          return; // abort
+        }
+
+        dataReader.onload = function (e) {
+          console.log("Data (CSV) loaded.");
+          data = e.target.result;
+          settingsReader.readAsText(settingsFile);
+        };
+        settingsReader.onload = function (e) {
+          console.log("Settings (JSON) loaded.");
+          settings = e.target.result;
+          timetable(data, settings);
+        };
+        dataReader.readAsText(dataFile);
+      }
+    </script>
+  </body>
+</html>
